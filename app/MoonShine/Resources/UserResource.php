@@ -51,7 +51,7 @@ final class UserResource extends ModelResource
     {
         return [
             ID::make()->sortable(),
-            Text::make('Имя пользователя', 'username'),
+            Text::make('ФИО', 'fullname'),
             Email::make('Почта', 'email'),
             Image::make('Аватар', 'avatar'),
             Text::make('Активность', 'active', fn ($item) => $item->active ? 'Активный' : 'Неактивный')
@@ -69,7 +69,8 @@ final class UserResource extends ModelResource
                 Tabs::make([
                     Tab::make('Основная информация', [
                         ID::make(),
-                        Text::make('Имя пользователя', 'username'),
+                        Text::make('Имя', 'firstname'),
+                        Text::make('Фамилия', 'lastname'),
                         Email::make('Почта', 'email'),
                         Image::make('Аватар', 'avatar'),
                         Switcher::make('Активный', 'active'),
@@ -114,7 +115,8 @@ final class UserResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            Text::make('Имя пользователя', 'username'),
+            Text::make('Имя', 'firstname'),
+            Text::make('Фамилия', 'lastname'),
             Email::make('Почта', 'email'),
             Switcher::make('Активность', 'active'),
         ];
@@ -124,7 +126,8 @@ final class UserResource extends ModelResource
     {
         return [
             'id',
-            'username',
+            'firstname',
+            'lastname',
             'email',
         ];
     }

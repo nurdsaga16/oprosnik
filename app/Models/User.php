@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -46,5 +50,30 @@ final class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function groups(): HasOne
+    {
+        return $this->hasOne(Group::class);
+    }
+
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class)
+            ->using(SubjectUser::class)
+            ->withPivot('active')
+            ->withTimestamps();
+    }
+
+    public function practices(): HasMany
+    {
+        return $this->hasMany(Practice::class);
+    }
+
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => "{$this->firstname} {$this->lastname}"
+        );
     }
 }

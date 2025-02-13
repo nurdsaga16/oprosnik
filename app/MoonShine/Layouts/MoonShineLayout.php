@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace App\MoonShine\Layouts;
 
 use App\MoonShine\Resources\DepartmentResource;
+use App\MoonShine\Resources\GroupResource;
+use App\MoonShine\Resources\PracticeResource;
 use App\MoonShine\Resources\SpecializationResource;
+use App\MoonShine\Resources\SubjectResource;
+use App\MoonShine\Resources\SubjectUserResource;
 use App\MoonShine\Resources\UserResource;
 use MoonShine\ColorManager\ColorManager;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
@@ -30,9 +34,14 @@ final class MoonShineLayout extends AppLayout
             MenuGroup::make('Колледж', [
                 MenuItem::make('Отделения', DepartmentResource::class, 'squares-2x2'),
                 MenuItem::make('Специальности', SpecializationResource::class, 'briefcase'),
-                MenuItem::make('Преподаватели', UserResource::class, 'user-group'),
+                MenuItem::make('Преподаватели', UserResource::class, 'user-circle'),
+                MenuItem::make('Группы', GroupResource::class, 'user-group'),
             ], 'academic-cap'),
-
+            MenuGroup::make('Обучение', [
+                MenuItem::make('Предметы', SubjectResource::class, 'book-open'),
+                MenuItem::make('Предмет - Преподаватель', SubjectUserResource::class, 'link'),
+                MenuItem::make('Практики', PracticeResource::class, 'presentation-chart-line'),
+            ], 'code-bracket-square'),
         ];
     }
 
@@ -43,7 +52,7 @@ final class MoonShineLayout extends AppLayout
     {
         parent::colors($colorManager);
 
-        // $colorManager->primary('#00000');
+        //        $colorManager->primary('#00000');
     }
 
     public function build(): Layout
