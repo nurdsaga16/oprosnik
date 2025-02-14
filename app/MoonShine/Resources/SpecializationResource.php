@@ -10,9 +10,12 @@ use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Enums\Action;
 use MoonShine\Laravel\Fields\Relationships\BelongsTo;
 use MoonShine\Laravel\Resources\ModelResource;
+use MoonShine\Support\AlpineJs;
+use MoonShine\Support\Enums\JsEvent;
 use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
+use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Text;
@@ -26,6 +29,14 @@ final class SpecializationResource extends ModelResource
 
     protected string $title = 'Специальности';
 
+    protected int $itemsPerPage = 10;
+
+    protected bool $cursorPaginate = true;
+
+    protected bool $stickyTable = true;
+
+    protected array $with = ['department'];
+
     protected SortDirection $sortDirection = SortDirection::ASC;
 
     protected ?PageType $redirectAfterSave = PageType::INDEX;
@@ -33,6 +44,14 @@ final class SpecializationResource extends ModelResource
     /**
      * @return list<FieldContract>
      */
+    protected function topButtons(): ListOf
+    {
+        return parent::topButtons()->add(
+            ActionButton::make('Перезагрузить', '#')
+                ->dispatchEvent(AlpineJs::event(JsEvent::TABLE_UPDATED, $this->getListComponentName()))
+        );
+    }
+
     protected function activeActions(): ListOf
     {
         return parent::activeActions()->except(Action::VIEW);
@@ -82,6 +101,8 @@ final class SpecializationResource extends ModelResource
     protected function rules(mixed $item): array
     {
         return [
+            'name' => ['required', 'string', 'max:255'],
+            'department_id' => ['required', 'exists:departments,id'],
         ];
     }
 

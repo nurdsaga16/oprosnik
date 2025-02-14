@@ -11,11 +11,14 @@ use MoonShine\Laravel\Fields\Relationships\BelongsTo;
 use MoonShine\Laravel\Models\MoonshineUser;
 use MoonShine\Laravel\Models\MoonshineUserRole;
 use MoonShine\Laravel\Resources\ModelResource;
+use MoonShine\Support\AlpineJs;
 use MoonShine\Support\Attributes\Icon;
 use MoonShine\Support\Enums\Color;
+use MoonShine\Support\Enums\JsEvent;
 use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
+use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Collapse;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Components\Layout\Flex;
@@ -45,9 +48,19 @@ final class MoonShineUserResource extends ModelResource
 
     protected bool $columnSelection = true;
 
+    protected bool $stickyTable = true;
+
     protected SortDirection $sortDirection = SortDirection::ASC;
 
     protected ?PageType $redirectAfterSave = PageType::INDEX;
+
+    protected function topButtons(): ListOf
+    {
+        return parent::topButtons()->add(
+            ActionButton::make('Перезагрузить', '#')
+                ->dispatchEvent(AlpineJs::event(JsEvent::TABLE_UPDATED, $this->getListComponentName()))
+        );
+    }
 
     public function getTitle(): string
     {

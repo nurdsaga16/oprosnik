@@ -9,9 +9,12 @@ use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Enums\Action;
 use MoonShine\Laravel\Resources\ModelResource;
+use MoonShine\Support\AlpineJs;
+use MoonShine\Support\Enums\JsEvent;
 use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
+use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Collapse;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Components\Tabs;
@@ -33,6 +36,12 @@ final class UserResource extends ModelResource
 
     protected string $title = 'Преподаватели';
 
+    protected int $itemsPerPage = 10;
+
+    protected bool $cursorPaginate = true;
+
+    protected bool $stickyTable = true;
+
     protected bool $columnSelection = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
@@ -42,6 +51,14 @@ final class UserResource extends ModelResource
     /**
      * @return list<FieldContract>
      */
+    protected function topButtons(): ListOf
+    {
+        return parent::topButtons()->add(
+            ActionButton::make('Перезагрузить', '#')
+                ->dispatchEvent(AlpineJs::event(JsEvent::TABLE_UPDATED, $this->getListComponentName()))
+        );
+    }
+
     protected function activeActions(): ListOf
     {
         return parent::activeActions()->except(Action::VIEW);
@@ -109,7 +126,14 @@ final class UserResource extends ModelResource
      */
     protected function rules(mixed $item): array
     {
-        return [];
+        return [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,'.($item->id ?? 'NULL').',id'],
+            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'active' => ['boolean'],
+            'password' => [$item->exists ? 'nullable' : 'required', 'string'],
+        ];
     }
 
     protected function filters(): iterable

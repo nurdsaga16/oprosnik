@@ -7,10 +7,13 @@ namespace App\MoonShine\Resources;
 use MoonShine\Laravel\Enums\Action;
 use MoonShine\Laravel\Models\MoonshineUserRole;
 use MoonShine\Laravel\Resources\ModelResource;
+use MoonShine\Support\AlpineJs;
 use MoonShine\Support\Attributes\Icon;
+use MoonShine\Support\Enums\JsEvent;
 use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
+use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Text;
@@ -33,9 +36,19 @@ final class MoonShineUserRoleResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
+    protected bool $stickyTable = true;
+
     protected SortDirection $sortDirection = SortDirection::ASC;
 
     protected ?PageType $redirectAfterSave = PageType::INDEX;
+
+    protected function topButtons(): ListOf
+    {
+        return parent::topButtons()->add(
+            ActionButton::make('Перезагрузить', '#')
+                ->dispatchEvent(AlpineJs::event(JsEvent::TABLE_UPDATED, $this->getListComponentName()))
+        );
+    }
 
     public function getTitle(): string
     {

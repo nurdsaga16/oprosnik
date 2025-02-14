@@ -14,13 +14,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('subject_user', function (Blueprint $table) {
-            $table->unsignedBigInteger('subject_id');
-            $table->unsignedBigInteger('user_id');
+            $table->id();
+            $table->foreignId('subject_id')->constrained();
+            $table->foreignId('user_id')->constrained();
             $table->boolean('active')->default(true);
             $table->timestamps();
 
-            $table->primary(['subject_id', 'user_id']);
+            $table->unique(['subject_id', 'user_id']);
         });
+
     }
 
     /**

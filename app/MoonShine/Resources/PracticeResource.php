@@ -9,8 +9,12 @@ use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Fields\Relationships\BelongsTo;
 use MoonShine\Laravel\Resources\ModelResource;
+use MoonShine\Support\AlpineJs;
+use MoonShine\Support\Enums\JsEvent;
 use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
+use MoonShine\Support\ListOf;
+use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\ID;
@@ -29,6 +33,14 @@ final class PracticeResource extends ModelResource
 
     protected string $column = 'name';
 
+    protected int $itemsPerPage = 10;
+
+    protected array $with = ['user', 'subject', 'group'];
+
+    protected bool $cursorPaginate = true;
+
+    protected bool $stickyTable = true;
+
     protected bool $columnSelection = true;
 
     protected ?PageType $redirectAfterSave = PageType::INDEX;
@@ -38,6 +50,14 @@ final class PracticeResource extends ModelResource
     /**
      * @return list<FieldContract>
      */
+    protected function topButtons(): ListOf
+    {
+        return parent::topButtons()->add(
+            ActionButton::make('Перезагрузить', '#')
+                ->dispatchEvent(AlpineJs::event(JsEvent::TABLE_UPDATED, $this->getListComponentName()))
+        );
+    }
+
     protected function indexFields(): iterable
     {
         return [
@@ -63,9 +83,9 @@ final class PracticeResource extends ModelResource
                 Textarea::make('Описание', 'description'),
                 Date::make('Начало', 'start_date'),
                 Date::make('Конец', 'end_date'),
-                BelongsTo::make('Предмет', 'subject', 'id', SubjectResource::class),
-                BelongsTo::make('Преподаватель', 'user', 'id', UserResource::class),
-                BelongsTo::make('Группа', 'group', 'id', GroupResource::class),
+                BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class),
+                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
+                BelongsTo::make('Группа', 'group', 'name', GroupResource::class),
                 Switcher::make('Активность', 'active'),
             ]),
         ];
@@ -98,7 +118,16 @@ final class PracticeResource extends ModelResource
      */
     protected function rules(mixed $item): array
     {
-        return [];
+        return [
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'start_date' => ['required', 'date', 'before_or_equal:end_date'],
+            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'subject_id' => ['required', 'exists:subjects,id'],
+            'user_id' => ['required', 'exists:users,id'],
+            'group_id' => ['required', 'exists:groups,id'],
+            'active' => ['boolean'],
+        ];
     }
 
     protected function filters(): iterable
