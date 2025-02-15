@@ -7,9 +7,12 @@ namespace App\MoonShine\Layouts;
 use App\MoonShine\Resources\DepartmentResource;
 use App\MoonShine\Resources\GroupResource;
 use App\MoonShine\Resources\PracticeResource;
+use App\MoonShine\Resources\QuestionResource;
+use App\MoonShine\Resources\SectionResource;
 use App\MoonShine\Resources\SpecializationResource;
 use App\MoonShine\Resources\SubjectResource;
 use App\MoonShine\Resources\SubjectUserResource;
+use App\MoonShine\Resources\SurveyResource;
 use App\MoonShine\Resources\UserResource;
 use MoonShine\ColorManager\ColorManager;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
@@ -42,6 +45,11 @@ final class MoonShineLayout extends AppLayout
                 MenuItem::make('Предмет - Преподаватель', SubjectUserResource::class, 'link'),
                 MenuItem::make('Практики', PracticeResource::class, 'presentation-chart-line'),
             ], 'code-bracket-square'),
+            MenuGroup::make('Опросник', [
+                MenuItem::make('Опросы', SurveyResource::class, 'chart-bar-square'),
+                MenuItem::make('Секции', SectionResource::class, 'document-duplicate'),
+                MenuItem::make('Вопросы', QuestionResource::class, 'question-mark-circle'),
+            ], 'pencil-square'),
         ];
     }
 

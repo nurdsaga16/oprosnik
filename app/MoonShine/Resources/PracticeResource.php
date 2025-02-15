@@ -31,7 +31,7 @@ final class PracticeResource extends ModelResource
 
     protected string $title = 'Практики';
 
-    protected string $column = 'name';
+    protected string $column = 'title';
 
     protected int $itemsPerPage = 10;
 
@@ -62,10 +62,10 @@ final class PracticeResource extends ModelResource
     {
         return [
             ID::make()->sortable(),
-            Text::make('Название', 'name')->unescape(),
-            BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class)->sortable(),
+            Text::make('Название', 'title')->unescape(),
+            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->sortable(),
             BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->sortable(),
-            BelongsTo::make('Группа', 'group', 'name', GroupResource::class)->sortable(),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->sortable(),
             Text::make('Активность', 'active', fn ($item) => $item->active ? 'Активный' : 'Неактивный')
                 ->badge(fn ($value) => $value === 1 ? 'green' : 'red')->sortable(),
         ];
@@ -79,13 +79,13 @@ final class PracticeResource extends ModelResource
         return [
             Box::make([
                 ID::make(),
-                Text::make('Название', 'name'),
-                Textarea::make('Описание', 'description'),
-                Date::make('Начало', 'start_date'),
-                Date::make('Конец', 'end_date'),
-                BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class),
-                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
-                BelongsTo::make('Группа', 'group', 'name', GroupResource::class),
+                Text::make('Название', 'title')->required(),
+                Textarea::make('Описание', 'description')->nullable(),
+                Date::make('Начало', 'start_date')->required(),
+                Date::make('Конец', 'end_date')->required(),
+                BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->required(),
+                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->required(),
+                BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->required(),
                 Switcher::make('Активность', 'active'),
             ]),
         ];
@@ -98,13 +98,13 @@ final class PracticeResource extends ModelResource
     {
         return [
             ID::make(),
-            Text::make('Название', 'name')->unescape(),
+            Text::make('Название', 'title')->unescape(),
             Textarea::make('Описание', 'description'),
             Date::make('Начало', 'start_date')->format('d.m.Y'),
             Date::make('Конец', 'end_date')->format('d.m.Y'),
-            BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class),
+            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class),
             BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
-            BelongsTo::make('Группа', 'group', 'name', GroupResource::class),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class),
             Text::make('Активность', 'active', fn ($item) => $item->active ? 'Активный' : 'Неактивный')
                 ->badge(fn ($value) => $value === 1 ? 'green' : 'red')->sortable(),
         ];
@@ -119,7 +119,7 @@ final class PracticeResource extends ModelResource
     protected function rules(mixed $item): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'start_date' => ['required', 'date', 'before_or_equal:end_date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
@@ -133,14 +133,11 @@ final class PracticeResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            Text::make('Название', 'name'),
-            Textarea::make('Описание', 'description'),
-            Date::make('Начало', 'start_date'),
-            Date::make('Конец', 'end_date'),
-            BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
-            BelongsTo::make('Группа', 'group', 'name', GroupResource::class),
-            Switcher::make('Активность', 'active'),
+            Date::make('Начало', 'start_date')->nullable(),
+            Date::make('Конец', 'end_date')->nullable(),
+            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->nullable(),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->nullable(),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->nullable(),
         ];
     }
 
@@ -148,13 +145,13 @@ final class PracticeResource extends ModelResource
     {
         return [
             'id',
-            'name',
+            'title',
             'description',
             'start_date',
             'end_date',
-            'subjects.name',
-            'users.name',
-            'groups.name',
+            'subjects.title',
+            'users.fullname',
+            'groups.title',
         ];
     }
 }

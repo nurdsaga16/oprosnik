@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class Practice extends Model
 {
@@ -22,6 +23,11 @@ final class Practice extends Model
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class, 'group_id');
+    }
+
+    public function survey(): HasOne
+    {
+        return $this->hasOne(Survey::class, 'practice_id');
     }
 
     protected $fillable = ['subject_id', 'user_id', 'group_id'];

@@ -60,7 +60,7 @@ final class SubjectResource extends ModelResource
     {
         return [
             ID::make()->sortable(),
-            Text::make('Название', 'name'),
+            Text::make('Название', 'title'),
             Textarea::make('Описание', 'description'),
             Text::make('Активность', 'active', fn ($item) => $item->active ? 'Активный' : 'Неактивный')
                 ->badge(fn ($value) => $value === 1 ? 'green' : 'red')->sortable(),
@@ -75,8 +75,8 @@ final class SubjectResource extends ModelResource
         return [
             Box::make([
                 ID::make(),
-                Text::make('Название', 'name'),
-                Textarea::make('Описание', 'description'),
+                Text::make('Название', 'title')->required(),
+                Textarea::make('Описание', 'description')->nullable(),
                 Switcher::make('Активный', 'active'),
             ]),
         ];
@@ -103,20 +103,11 @@ final class SubjectResource extends ModelResource
         return [];
     }
 
-    protected function filters(): iterable
-    {
-        return [
-            Text::make('Название', 'name'),
-            Textarea::make('Описание', 'description'),
-            Switcher::make('Активность', 'active'),
-        ];
-    }
-
     protected function search(): array
     {
         return [
             'id',
-            'name',
+            'title',
             'description',
         ];
     }

@@ -61,8 +61,8 @@ final class SpecializationResource extends ModelResource
     {
         return [
             ID::make()->sortable(),
-            Text::make('Название', 'name'),
-            BelongsTo::make('Отделение', 'department', 'name', DepartmentResource::class)->sortable(),
+            Text::make('Название', 'title'),
+            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)->sortable(),
         ];
     }
 
@@ -74,8 +74,8 @@ final class SpecializationResource extends ModelResource
         return [
             Box::make([
                 ID::make(),
-                Text::make('Название', 'name'),
-                BelongsTo::make('Отделение', 'department', 'name', DepartmentResource::class),
+                BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)->required(),
+                Text::make('Название', 'title')->required(),
             ]),
         ];
     }
@@ -87,8 +87,8 @@ final class SpecializationResource extends ModelResource
     {
         return [
             ID::make(),
-            Text::make('Название', 'name'),
-            BelongsTo::make('Отделение', 'department', 'name', DepartmentResource::class),
+            Text::make('Название', 'title'),
+            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class),
         ];
     }
 
@@ -101,7 +101,7 @@ final class SpecializationResource extends ModelResource
     protected function rules(mixed $item): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'department_id' => ['required', 'exists:departments,id'],
         ];
     }
@@ -109,8 +109,7 @@ final class SpecializationResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Отделение', 'department', 'name', DepartmentResource::class),
-            Text::make('Название', 'name'),
+            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)->nullable(),
         ];
     }
 
@@ -118,8 +117,8 @@ final class SpecializationResource extends ModelResource
     {
         return [
             'id',
-            'name',
-            'department.name',
+            'title',
+            'department.title',
         ];
     }
 }

@@ -11,12 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 final class Group extends Model
 {
-    public function users(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function specializations(): BelongsTo
+    public function specialization(): BelongsTo
     {
         return $this->belongsTo(Specialization::class, 'specialization_id');
     }
@@ -26,7 +26,12 @@ final class Group extends Model
         return $this->hasMany(Practice::class);
     }
 
-    public function departments(): HasOneThrough
+    public function surveys(): HasMany
+    {
+        return $this->HasMany(Survey::class, 'group_id');
+    }
+
+    public function department(): HasOneThrough
     {
         return $this->hasOneThrough(Department::class, Specialization::class, 'id', 'id', 'specialization_id', 'department_id');
     }

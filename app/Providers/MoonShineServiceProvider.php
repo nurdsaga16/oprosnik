@@ -18,6 +18,9 @@ use MoonShine\Contracts\Core\DependencyInjection\ConfiguratorContract;
 use MoonShine\Contracts\Core\DependencyInjection\CoreContract;
 use MoonShine\Laravel\DependencyInjection\MoonShine;
 use MoonShine\Laravel\DependencyInjection\MoonShineConfigurator;
+use App\MoonShine\Resources\SurveyResource;
+use App\MoonShine\Resources\QuestionResource;
+use App\MoonShine\Resources\SectionResource;
 
 final class MoonShineServiceProvider extends ServiceProvider
 {
@@ -40,6 +43,9 @@ final class MoonShineServiceProvider extends ServiceProvider
                 SubjectResource::class,
                 SubjectUserResource::class,
                 PracticeResource::class,
+                SurveyResource::class,
+                QuestionResource::class,
+                SectionResource::class,
             ])
             ->pages([
                 ...$config->getPages(),

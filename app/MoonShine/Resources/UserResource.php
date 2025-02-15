@@ -15,8 +15,8 @@ use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\ActionButton;
-use MoonShine\UI\Components\Collapse;
 use MoonShine\UI\Components\Layout\Box;
+use MoonShine\UI\Components\Layout\Flex;
 use MoonShine\UI\Components\Tabs;
 use MoonShine\UI\Components\Tabs\Tab;
 use MoonShine\UI\Fields\Email;
@@ -86,22 +86,22 @@ final class UserResource extends ModelResource
                 Tabs::make([
                     Tab::make('Основная информация', [
                         ID::make(),
-                        Text::make('Имя', 'firstname'),
-                        Text::make('Фамилия', 'lastname'),
-                        Email::make('Почта', 'email'),
-                        Image::make('Аватар', 'avatar'),
+                        Flex::make([
+                            Text::make('Имя', 'firstname')->required(),
+                            Text::make('Фамилия', 'lastname')->required(),
+                        ]),
+                        Email::make('Почта', 'email')->required(),
+                        Image::make('Аватар', 'avatar')->nullable(),
                         Switcher::make('Активный', 'active'),
                     ])->icon('user-circle'),
                     Tab::make('Пароль', [
-                        Collapse::make(__('moonshine::ui.resource.change_password'), [
-                            Password::make(__('moonshine::ui.resource.password'), 'password')
-                                ->customAttributes(['autocomplete' => 'new-password'])
-                                ->eye(),
+                        Password::make(__('moonshine::ui.resource.password'), 'password')
+                            ->customAttributes(['autocomplete' => 'new-password'])
+                            ->eye()->required(),
 
-                            PasswordRepeat::make(__('moonshine::ui.resource.repeat_password'), 'password_repeat')
-                                ->customAttributes(['autocomplete' => 'confirm-password'])
-                                ->eye(),
-                        ])->icon('lock-closed'),
+                        PasswordRepeat::make(__('moonshine::ui.resource.repeat_password'), 'password_repeat')
+                            ->customAttributes(['autocomplete' => 'confirm-password'])
+                            ->eye()->required(),
                     ])->icon('lock-closed'),
                 ]),
             ]),
@@ -133,16 +133,6 @@ final class UserResource extends ModelResource
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'active' => ['boolean'],
             'password' => [$item->exists ? 'nullable' : 'required', 'string'],
-        ];
-    }
-
-    protected function filters(): iterable
-    {
-        return [
-            Text::make('Имя', 'firstname'),
-            Text::make('Фамилия', 'lastname'),
-            Email::make('Почта', 'email'),
-            Switcher::make('Активность', 'active'),
         ];
     }
 

@@ -63,7 +63,7 @@ final class SubjectUserResource extends ModelResource
     protected function indexFields(): iterable
     {
         return [
-            BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class)->sortable(),
+            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->sortable(),
             BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->sortable(),
             Text::make('Активность', 'active', fn ($item) => $item->active ? 'Активный' : 'Неактивный')
                 ->badge(fn ($value) => $value === 1 ? 'green' : 'red')->sortable(),
@@ -77,8 +77,8 @@ final class SubjectUserResource extends ModelResource
     {
         return [
             Box::make([
-                BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class),
-                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
+                BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->required(),
+                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->required(),
                 Switcher::make('Активность', 'active'),
             ]),
         ];
@@ -112,9 +112,8 @@ final class SubjectUserResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Предмет', 'subject', 'name', SubjectResource::class),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
-            Switcher::make('Активность', 'active'),
+            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->nullable(),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->nullable(),
         ];
     }
 
@@ -122,8 +121,8 @@ final class SubjectUserResource extends ModelResource
     {
         return [
             'id',
-            'subject.name',
-            'user.name',
+            'subject.title',
+            'user.fullname',
         ];
     }
 }

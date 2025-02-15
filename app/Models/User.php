@@ -52,7 +52,7 @@ final class User extends Authenticatable
         ];
     }
 
-    public function groups(): HasOne
+    public function group(): HasOne
     {
         return $this->hasOne(Group::class);
     }
@@ -68,6 +68,11 @@ final class User extends Authenticatable
     public function practices(): HasMany
     {
         return $this->hasMany(Practice::class);
+    }
+
+    public function surveys(): HasMany
+    {
+        return $this->HasMany(Survey::class, 'user_id');
     }
 
     public function fullName(): Attribute

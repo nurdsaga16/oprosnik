@@ -10,7 +10,6 @@ use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\Support\AlpineJs;
 use MoonShine\Support\Attributes\Icon;
 use MoonShine\Support\Enums\JsEvent;
-use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\ActionButton;
@@ -39,8 +38,6 @@ final class MoonShineUserRoleResource extends ModelResource
     protected bool $stickyTable = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
-
-    protected ?PageType $redirectAfterSave = PageType::INDEX;
 
     protected function topButtons(): ListOf
     {

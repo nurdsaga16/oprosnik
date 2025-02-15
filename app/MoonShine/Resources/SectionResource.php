@@ -4,29 +4,32 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources;
 
-use App\Models\Department;
+use App\Models\Section;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Enums\Action;
+use MoonShine\Laravel\Fields\Relationships\BelongsTo;
 use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\Support\AlpineJs;
 use MoonShine\Support\Enums\JsEvent;
-use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\ID;
 use MoonShine\UI\Fields\Text;
+use MoonShine\UI\Fields\Textarea;
 
 /**
- * @extends ModelResource<Department>
+ * @extends ModelResource<Section>
  */
-final class DepartmentResource extends ModelResource
+final class SectionResource extends ModelResource
 {
-    protected string $model = Department::class;
+    protected string $model = Section::class;
 
-    protected string $title = 'Отделения';
+    protected string $title = 'Секции';
+
+    protected bool $createInModal = true;
 
     protected int $itemsPerPage = 10;
 
@@ -34,18 +37,13 @@ final class DepartmentResource extends ModelResource
 
     protected bool $stickyTable = true;
 
-    protected ?PageType $redirectAfterSave = PageType::INDEX;
+    protected bool $columnSelection = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
 
     /**
      * @return list<FieldContract>
      */
-    protected function activeActions(): ListOf
-    {
-        return parent::activeActions()->except(Action::VIEW);
-    }
-
     protected function topButtons(): ListOf
     {
         return parent::topButtons()->add(
@@ -54,11 +52,18 @@ final class DepartmentResource extends ModelResource
         );
     }
 
+    protected function activeActions(): ListOf
+    {
+        return parent::activeActions()->except(Action::VIEW);
+    }
+
     protected function indexFields(): iterable
     {
         return [
             ID::make()->sortable(),
             Text::make('Название', 'title'),
+            Textarea::make('Описание', 'description'),
+            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class),
         ];
     }
 
@@ -71,6 +76,8 @@ final class DepartmentResource extends ModelResource
             Box::make([
                 ID::make(),
                 Text::make('Название', 'title')->required(),
+                Textarea::make('Описание', 'description')->nullable(),
+                BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->required(),
             ]),
         ];
     }
@@ -82,20 +89,24 @@ final class DepartmentResource extends ModelResource
     {
         return [
             ID::make(),
-            Text::make('Название', 'title'),
         ];
     }
 
     /**
-     * @param  Department  $item
+     * @param  Section  $item
      * @return array<string, string[]|string>
      *
      * @see https://laravel.com/docs/validation#available-validation-rules
      */
     protected function rules(mixed $item): array
     {
+        return [];
+    }
+
+    protected function filters(): iterable
+    {
         return [
-            'title' => ['required', 'string', 'max:255', 'unique:departments,title,'.($item->id ?? 'null')],
+            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->nullable(),
         ];
     }
 
@@ -104,6 +115,7 @@ final class DepartmentResource extends ModelResource
         return [
             'id',
             'title',
+            'description',
         ];
     }
 }

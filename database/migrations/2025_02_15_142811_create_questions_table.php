@@ -13,11 +13,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subjects', function (Blueprint $table) {
+        Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('question');
             $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
+            $table->string('question_type');
+            $table->unsignedTinyInteger('order');
+            $table->foreignId('survey_id')->constrained();
+            $table->foreignId('section_id')->nullable()->constrained();
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subjects');
+        Schema::dropIfExists('questions');
     }
 };
