@@ -16,6 +16,7 @@ use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\ActionButton;
+use MoonShine\UI\Components\CardsBuilder;
 use MoonShine\UI\Components\Layout\Box;
 use MoonShine\UI\Fields\Enum;
 use MoonShine\UI\Fields\ID;
@@ -57,6 +58,34 @@ final class QuestionResource extends ModelResource
         );
     }
 
+    public function getListEventName(?string $name = null, array $params = []): string
+    {
+        $name ??= $this->getListComponentName();
+
+        return AlpineJs::event(JsEvent::CARDS_UPDATED, $name, $params);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function modifyListComponent(ComponentContract $component): ComponentContract
+    {
+        return CardsBuilder::make($this->getItems(), $this->getIndexFields())
+            ->cast($this->getCaster())
+            ->name($this->getListComponentName())
+            ->async()
+            ->overlay()
+            ->title('question') // Укажите поле для заголовка карточки
+            ->subtitle(fn ($item) => match ($item->question_type) {
+                'Текст' => 'Тип: Текст',
+                'Множественный выбор' => 'Тип: Множественный выбор',
+                'Оценка' => 'Тип: Оценка',
+                default => 'Тип: Неизвестный',
+            }) // Укажите поле для подзаголовка карточки
+            ->url(fn ($item) => $this->getFormPageUrl($item->getKey())) // Измените на правильный ключ
+            ->buttons($this->getIndexButtons());
+    }
+
     protected function indexFields(): iterable
     {
         return [
@@ -67,7 +96,7 @@ final class QuestionResource extends ModelResource
                 'Текст' => 'Текст',
                 'Множественный выбор' => 'Множественный выбор',
                 'Оценка' => 'Оценка',
-            })->badge('gray')->sortable(),
+            })->badge('purple')->sortable(),
             Number::make('Номер порядка', 'order')->sortable(),
         ];
     }
@@ -87,13 +116,13 @@ final class QuestionResource extends ModelResource
                         'Текст' => 'Текст',
                         'Множественный выбор' => 'Множественный выбор',
                         'Оценка' => 'Оценка'])->required(),
-                Number::make('Номер порядка', 'order'),
+                Number::make('Номер порядка', 'order')->required(),
                 BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->required(),
                 BelongsTo::make('Секция', 'section', 'title', SectionResource::class)
                     ->reactive()
                     ->creatable()
                     ->valuesQuery(static fn (Builder $q) => $q->select(['id', 'title']))
-                    ->required(),
+                    ->nullable(),
             ]),
         ];
     }
@@ -111,10 +140,10 @@ final class QuestionResource extends ModelResource
                 'Текст' => 'Текст',
                 'Множественный выбор' => 'Множественный выбор',
                 'Оценка' => 'Оценка',
-            })->badge('gray'),
+            })->badge('purple'),
             Number::make('Номер порядка', 'order'),
             BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class),
-            BelongsTo::make('Секция', 'section', 'title', SurveyResource::class),
+            BelongsTo::make('Секция', 'section', 'title', SectionResource::class),
         ];
     }
 
@@ -132,14 +161,14 @@ final class QuestionResource extends ModelResource
     protected function filters(): iterable
     {
         return [
+            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->nullable(),
+            BelongsTo::make('Секция', 'section', 'title', SurveyResource::class)->nullable(),
             Enum::make('Тип вопроса', 'question_type')
                 ->options([
                     'Текст' => 'Текст',
                     'Множественный выбор' => 'Множественный выбор',
                     'Оценка' => 'Оценка'])->nullable(),
             Number::make('Номер порядка', 'order'),
-            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->nullable(),
-            BelongsTo::make('Секция', 'section', 'title', SurveyResource::class)->nullable(),
         ];
     }
 

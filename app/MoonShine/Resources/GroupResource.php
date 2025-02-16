@@ -34,7 +34,7 @@ final class GroupResource extends ModelResource
 
     protected int $itemsPerPage = 10;
 
-    protected array $with = ['user', 'specialization'];
+    protected array $with = ['user', 'specialization', 'department'];
 
     protected bool $cursorPaginate = true;
 
@@ -81,6 +81,7 @@ final class GroupResource extends ModelResource
                 Text::make('Название', 'title')->required(),
                 Enum::make('Курс', 'course')->options([1 => '1', 2 => '2', 3 => '3'])->required(),
                 BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class)->required(),
+                BelongsTo::make('Отделение', 'department', 'title', SpecializationResource::class)->required(),
                 BelongsTo::make('Специальность', 'specialization', 'title', SpecializationResource::class)->required(),
                 Switcher::make('Активный', 'active'),
             ]),
@@ -97,7 +98,7 @@ final class GroupResource extends ModelResource
             Text::make('Название', 'title'),
             Text::make('Курс', 'course'),
             BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class),
-            BelongsTo::make('Отделение', 'departments', 'title', DepartmentResource::class),
+            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class),
             BelongsTo::make('Специальность', 'specialization', 'title', SpecializationResource::class),
             Text::make('Активность', 'active', fn ($item) => $item->active ? 'Активный' : 'Неактивный')
                 ->badge(fn ($value) => $value === 1 ? 'green' : 'red')->sortable(),
@@ -117,6 +118,7 @@ final class GroupResource extends ModelResource
             'course' => ['required', 'integer', 'between:1,3'],
             'active' => ['boolean'],
             'user_id' => ['required', 'exists:user,id'],
+            'department_id' => ['required', 'exists:department,id'],
             'specialization_id' => ['required', 'exists:specialization,id'],
         ];
     }
@@ -125,8 +127,9 @@ final class GroupResource extends ModelResource
     {
         return [
             Enum::make('Курс', 'course')->options([1 => '1', 2 => '2', 3 => '3'])->nullable(),
-            BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class)->nullable(),
+            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)->nullable(),
             BelongsTo::make('Специальность', 'specialization', 'title', SpecializationResource::class)->nullable(),
+            BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class)->nullable(),
         ];
     }
 
@@ -136,6 +139,7 @@ final class GroupResource extends ModelResource
             'id',
             'title',
             'user.fullname',
+            'department.title',
             'specialization.title',
         ];
     }

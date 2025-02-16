@@ -133,11 +133,11 @@ final class PracticeResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            Date::make('Начало', 'start_date')->nullable(),
-            Date::make('Конец', 'end_date')->nullable(),
             BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->nullable(),
             BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->nullable(),
             BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->nullable(),
+            Date::make('Начало', 'start_date')->nullable(),
+            Date::make('Конец', 'end_date')->nullable(),
         ];
     }
 

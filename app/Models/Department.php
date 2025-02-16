@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Department extends Model
 {
-    public function specialization(): HasMany
+    public function specializations(): HasMany
     {
         return $this->hasMany(Specialization::class);
     }

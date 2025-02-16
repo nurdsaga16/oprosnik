@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
+            $table->unsignedTinyInteger('order');
             $table->foreignId('survey_id')->constrained();
             $table->timestamps();
         });

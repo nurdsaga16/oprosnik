@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Question extends Model
 {
@@ -17,5 +18,10 @@ final class Question extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
+    }
+
+    public function questionOptions(): HasMany
+    {
+        return $this->hasMany(QuestionOption::class);
     }
 }

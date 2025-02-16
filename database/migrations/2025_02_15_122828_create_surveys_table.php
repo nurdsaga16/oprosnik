@@ -21,8 +21,6 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date');
             $table->foreignId('practice_id')->constrained();
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('group_id')->constrained();
             $table->string('status');
             $table->boolean('template')->default(false);
             $table->timestamps();

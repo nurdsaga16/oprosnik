@@ -21,6 +21,7 @@ use MoonShine\Laravel\DependencyInjection\MoonShineConfigurator;
 use App\MoonShine\Resources\SurveyResource;
 use App\MoonShine\Resources\QuestionResource;
 use App\MoonShine\Resources\SectionResource;
+use App\MoonShine\Resources\QuestionOptionResource;
 
 final class MoonShineServiceProvider extends ServiceProvider
 {
@@ -46,6 +47,7 @@ final class MoonShineServiceProvider extends ServiceProvider
                 SurveyResource::class,
                 QuestionResource::class,
                 SectionResource::class,
+                QuestionOptionResource::class,
             ])
             ->pages([
                 ...$config->getPages(),

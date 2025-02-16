@@ -7,7 +7,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 final class Group extends Model
 {
@@ -26,13 +25,8 @@ final class Group extends Model
         return $this->hasMany(Practice::class);
     }
 
-    public function surveys(): HasMany
+    public function department(): BelongsTo
     {
-        return $this->HasMany(Survey::class, 'group_id');
-    }
-
-    public function department(): HasOneThrough
-    {
-        return $this->hasOneThrough(Department::class, Specialization::class, 'id', 'id', 'specialization_id', 'department_id');
+        return $this->belongsTo(Department::class, 'department_id');
     }
 }

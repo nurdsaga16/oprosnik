@@ -7,6 +7,7 @@ namespace App\MoonShine\Layouts;
 use App\MoonShine\Resources\DepartmentResource;
 use App\MoonShine\Resources\GroupResource;
 use App\MoonShine\Resources\PracticeResource;
+use App\MoonShine\Resources\QuestionOptionResource;
 use App\MoonShine\Resources\QuestionResource;
 use App\MoonShine\Resources\SectionResource;
 use App\MoonShine\Resources\SpecializationResource;
@@ -49,6 +50,7 @@ final class MoonShineLayout extends AppLayout
                 MenuItem::make('Опросы', SurveyResource::class, 'chart-bar-square'),
                 MenuItem::make('Секции', SectionResource::class, 'document-duplicate'),
                 MenuItem::make('Вопросы', QuestionResource::class, 'question-mark-circle'),
+                MenuItem::make('Варианты ответов', QuestionOptionResource::class, 'check-circle'),
             ], 'pencil-square'),
         ];
     }

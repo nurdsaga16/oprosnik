@@ -46,6 +46,7 @@ final class DatabaseSeeder extends Seeder
             collect(range(1, 5))->map(fn ($i) => [
                 'title' => "Group {$i}",
                 'course' => rand(1, 3),
+                'department_id' => $i,
                 'specialization_id' => $i,
                 'user_id' => $i,
                 'active' => true,
@@ -93,8 +94,6 @@ final class DatabaseSeeder extends Seeder
                 'start_date' => Carbon::now()->subDays(5),
                 'end_date' => Carbon::now()->addDays(5),
                 'practice_id' => $i,
-                'user_id' => $i,
-                'group_id' => $i,
                 'status' => 'Активный',
                 'template' => false,
                 'created_at' => now(),

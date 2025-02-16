@@ -36,6 +36,8 @@ final class SurveyResource extends ModelResource
 
     protected string $column = 'title';
 
+    protected array $with = ['practice', 'group', 'user'];
+
     protected int $itemsPerPage = 10;
 
     protected bool $cursorPaginate = true;
@@ -65,8 +67,8 @@ final class SurveyResource extends ModelResource
             ID::make()->sortable(),
             Text::make('Название', 'title'),
             BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)->sortable(),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', PracticeResource::class)->sortable(),
-            BelongsTo::make('Группа', 'group', 'title', PracticeResource::class)->sortable(),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class),
             Text::make('Статус', 'status', fn ($item) => match ($item->status) {
                 'Активный' => 'Активный',
                 'Завершенный' => 'Завершенный',
@@ -97,15 +99,13 @@ final class SurveyResource extends ModelResource
                     Date::make('Конец', 'end_date')->withTime()->required(),
                 ]),
                 BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)->required(),
-                BelongsTo::make('Преподаватель', 'user', 'fullname', PracticeResource::class)->required(),
-                BelongsTo::make('Группа', 'group', 'title', PracticeResource::class)->required(),
                 Enum::make('Статус', 'status')
                     ->options([
                         'Активный' => 'Активный',
                         'Завершенный' => 'Завершенный',
                         'Черновик' => 'Черновик',
                         'Архивированный' => 'Архивированный'])->required(),
-                Switcher::make('Шаблон', 'template')->required(),
+                Switcher::make('Шаблон', 'template'),
             ]),
         ];
     }
@@ -122,8 +122,8 @@ final class SurveyResource extends ModelResource
             Date::make('Начало', 'start_date')->format('d.m.Y H:i:s'),
             Date::make('Конец', 'end_date')->format('d.m.Y H:i:s'),
             BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', PracticeResource::class),
-            BelongsTo::make('Группа', 'group', 'title', PracticeResource::class),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class),
             Text::make('Статус', 'status', fn ($item) => match ($item->status) {
                 'Активный' => 'Активный',
                 'Завершенный' => 'Завершенный',
@@ -135,7 +135,7 @@ final class SurveyResource extends ModelResource
                 'Черновик' => 'yellow',
                 'Архивированный' => 'gray',
             }),
-            Text::make('Шаблон', 'template', fn ($item) => $item->active ? 'Да' : 'Нет')
+            Text::make('Шаблон', 'template', fn ($item) => $item->template ? 'Да' : 'Нет')
                 ->badge(fn ($value) => $value === 1 ? 'green' : 'red')->sortable(),
         ];
     }
@@ -155,8 +155,6 @@ final class SurveyResource extends ModelResource
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'practice_id' => ['required', 'exists:practices,id'],
-            'user_id' => ['required', 'exists:users,id'],
-            'group_id' => ['required', 'exists:groups,id'],
             'status' => ['required', 'in:Активный,Завершенный,Черновик,Архивированный'],
             'template' => ['boolean'],
         ];
@@ -165,13 +163,17 @@ final class SurveyResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            Number::make('Лимит', 'response_limit')->nullable(),
+            BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)->nullable(),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->nullable(),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->nullable(),
+            Enum::make('Статус', 'status')
+                ->options([
+                    'Активный' => 'Активный',
+                    'Завершенный' => 'Завершенный',
+                    'Черновик' => 'Черновик',
+                    'Архивированный' => 'Архивированный'])->nullable(),            Number::make('Лимит', 'response_limit')->nullable(),
             Date::make('Начало', 'start_date')->withTime()->nullable(),
             Date::make('Конец', 'end_date')->withTime()->nullable(),
-            BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)->nullable(),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', PracticeResource::class)->nullable(),
-            BelongsTo::make('Группа', 'group', 'title', PracticeResource::class)->nullable(),
-            Enum::make('Статус', 'status')->options([1 => 'Активный', 2 => 'Завершенный', 3 => 'Черновик', 4 => 'Архивированный'])->nullable(),
             Switcher::make('Шаблон', 'template')->nullable(),
         ];
     }

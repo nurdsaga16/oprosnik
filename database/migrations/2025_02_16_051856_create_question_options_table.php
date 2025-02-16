@@ -13,14 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('groups', function (Blueprint $table) {
+        Schema::create('question_options', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->unsignedTinyInteger('course');
-            $table->foreignId('department_id')->constrained();
-            $table->foreignId('specialization_id')->constrained();
-            $table->foreignId('user_id')->constrained();
-            $table->boolean('active')->default(true);
+            $table->string('option');
+            $table->unsignedTinyInteger('order');
+            $table->foreignId('question_id')->constrained();
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('groups');
+        Schema::dropIfExists('question_options');
     }
 };
