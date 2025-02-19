@@ -10,6 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Group extends Model
 {
+    protected $table = 'groups';
+
+    protected $fillable = [
+        'title',
+        'course',
+        'department_id',
+        'specialization_id',
+        'user_id',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -28,5 +38,10 @@ final class Group extends Model
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function surveyResponses(): HasMany
+    {
+        return $this->hasMany(SurveyResponse::class);
     }
 }

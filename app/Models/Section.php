@@ -10,6 +10,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Section extends Model
 {
+    protected $table = 'sections';
+
+    protected $fillable = [
+        'title',
+        'description',
+        'order',
+        'survey_id',
+    ];
+
     public function questions(): HasMany
     {
         return $this->hasMany(Question::class);
@@ -17,6 +26,6 @@ final class Section extends Model
 
     public function survey(): BelongsTo
     {
-        return $this->belongsTo(Survey::class);
+        return $this->belongsTo(Survey::class, 'survey_id');
     }
 }

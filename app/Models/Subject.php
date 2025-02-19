@@ -10,6 +10,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Subject extends Model
 {
+    protected $table = 'subjects';
+
+    protected $fillable = [
+        'title',
+        'description',
+    ];
+
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class)

@@ -90,5 +90,5 @@ return [
 
     // Localizations
     'locale' => 'ru',
-    'locales' => ['en', 'ru'],
+    'locales' => ['ru'],
 ];

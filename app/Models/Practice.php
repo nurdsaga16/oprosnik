@@ -10,6 +10,18 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 final class Practice extends Model
 {
+    protected $table = 'practices';
+
+    protected $fillable = [
+        'title',
+        'description',
+        'start_date',
+        'end_date',
+        'subject_id',
+        'user_id',
+        'group_id',
+    ];
+
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class, 'subject_id');
@@ -29,6 +41,4 @@ final class Practice extends Model
     {
         return $this->hasOne(Survey::class, 'practice_id');
     }
-
-    protected $fillable = ['subject_id', 'user_id', 'group_id'];
 }

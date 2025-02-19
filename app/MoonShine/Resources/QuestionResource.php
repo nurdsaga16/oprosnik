@@ -39,8 +39,6 @@ final class QuestionResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected bool $columnSelection = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
@@ -117,11 +115,14 @@ final class QuestionResource extends ModelResource
                         'Множественный выбор' => 'Множественный выбор',
                         'Оценка' => 'Оценка'])->required(),
                 Number::make('Номер порядка', 'order')->required(),
-                BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->required(),
+                BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)
+                    ->required()
+                    ->searchable(),
                 BelongsTo::make('Секция', 'section', 'title', SectionResource::class)
                     ->reactive()
                     ->creatable()
                     ->valuesQuery(static fn (Builder $q) => $q->select(['id', 'title']))
+                    ->searchable()
                     ->nullable(),
             ]),
         ];
@@ -155,14 +156,25 @@ final class QuestionResource extends ModelResource
      */
     protected function rules(mixed $item): array
     {
-        return [];
+        return [
+            'question' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'question_type' => ['required', 'in:Текст,Множественный выбор,Оценка'],
+            'order' => ['required', 'integer', 'min:1'],
+            'survey_id' => ['required', 'exists:surveys,id'],
+            'section_id' => ['nullable', 'exists:sections,id'],
+        ];
     }
 
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->nullable(),
-            BelongsTo::make('Секция', 'section', 'title', SurveyResource::class)->nullable(),
+            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Секция', 'section', 'title', SurveyResource::class)
+                ->nullable()
+                ->searchable(),
             Enum::make('Тип вопроса', 'question_type')
                 ->options([
                     'Текст' => 'Текст',

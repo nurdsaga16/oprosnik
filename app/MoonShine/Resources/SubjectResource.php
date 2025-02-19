@@ -34,8 +34,6 @@ final class SubjectResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected ?PageType $redirectAfterSave = PageType::INDEX;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
@@ -100,7 +98,11 @@ final class SubjectResource extends ModelResource
      */
     protected function rules(mixed $item): array
     {
-        return [];
+        return [
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'active' => ['boolean'],
+        ];
     }
 
     protected function search(): array

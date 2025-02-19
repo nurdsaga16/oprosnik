@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources;
 
-use App\Models\Section;
+use App\Models\SurveyResponse;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Laravel\Enums\Action;
@@ -12,27 +12,24 @@ use MoonShine\Laravel\Fields\Relationships\BelongsTo;
 use MoonShine\Laravel\Resources\ModelResource;
 use MoonShine\Support\AlpineJs;
 use MoonShine\Support\Enums\JsEvent;
+use MoonShine\Support\Enums\PageType;
 use MoonShine\Support\Enums\SortDirection;
 use MoonShine\Support\ListOf;
 use MoonShine\UI\Components\ActionButton;
 use MoonShine\UI\Components\Layout\Box;
+use MoonShine\UI\Fields\Date;
 use MoonShine\UI\Fields\ID;
-use MoonShine\UI\Fields\Number;
-use MoonShine\UI\Fields\Text;
-use MoonShine\UI\Fields\Textarea;
 
 /**
- * @extends ModelResource<Section>
+ * @extends ModelResource<SurveyResponse>
  */
-final class SectionResource extends ModelResource
+final class SurveyResponseResource extends ModelResource
 {
-    protected string $model = Section::class;
+    protected string $model = SurveyResponse::class;
 
-    protected string $title = 'Секции';
+    protected string $title = 'Ответы на опросы';
 
-    protected array $with = ['survey'];
-
-    protected bool $createInModal = true;
+    protected array $with = ['survey', 'group'];
 
     protected int $itemsPerPage = 10;
 
@@ -41,6 +38,8 @@ final class SectionResource extends ModelResource
     protected bool $columnSelection = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
+
+    protected ?PageType $redirectAfterSave = PageType::INDEX;
 
     /**
      * @return list<FieldContract>
@@ -62,10 +61,10 @@ final class SectionResource extends ModelResource
     {
         return [
             ID::make()->sortable(),
-            Text::make('Название', 'title'),
-            Textarea::make('Описание', 'description'),
-            Number::make('Номер порядка', 'order')->sortable(),
             BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->sortable(),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->sortable(),
+            Date::make('Начало', 'started_at')->format('d.m.Y H:i:s')->sortable(),
+            Date::make('Завершение', 'completed_at')->format('d.m.Y H:i:s')->sortable(),
         ];
     }
 
@@ -77,12 +76,14 @@ final class SectionResource extends ModelResource
         return [
             Box::make([
                 ID::make(),
-                Text::make('Название', 'title')->required(),
-                Textarea::make('Описание', 'description')->nullable(),
-                Number::make('Номер порядка', 'order')->required(),
                 BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)
                     ->required()
                     ->searchable(),
+                BelongsTo::make('Группа', 'group', 'title', GroupResource::class)
+                    ->required()
+                    ->searchable(),
+                Date::make('Начало', 'started_at')->withTime()->required(),
+                Date::make('Завершение', 'completed_at')->withTime()->required(),
             ]),
         ];
     }
@@ -98,19 +99,14 @@ final class SectionResource extends ModelResource
     }
 
     /**
-     * @param  Section  $item
+     * @param  SurveyResponse  $item
      * @return array<string, string[]|string>
      *
      * @see https://laravel.com/docs/validation#available-validation-rules
      */
     protected function rules(mixed $item): array
     {
-        return [
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'order' => ['required', 'integer', 'min:1'],
-            'survey_id' => ['required', 'exists:surveys,id'],
-        ];
+        return [];
     }
 
     protected function filters(): iterable
@@ -119,7 +115,11 @@ final class SectionResource extends ModelResource
             BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)
                 ->nullable()
                 ->searchable(),
-            Number::make('Номер порядка', 'order')->nullable(),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)
+                ->nullable()
+                ->searchable(),
+            Date::make('Начало', 'started_at')->withTime()->nullable(),
+            Date::make('Завершение', 'completed_at')->withTime()->nullable(),
         ];
     }
 
@@ -127,8 +127,8 @@ final class SectionResource extends ModelResource
     {
         return [
             'id',
-            'title',
-            'description',
+            'survey.title',
+            'group.title',
         ];
     }
 }

@@ -14,6 +14,7 @@ use App\MoonShine\Resources\SpecializationResource;
 use App\MoonShine\Resources\SubjectResource;
 use App\MoonShine\Resources\SubjectUserResource;
 use App\MoonShine\Resources\SurveyResource;
+use App\MoonShine\Resources\SurveyResponseResource;
 use App\MoonShine\Resources\UserResource;
 use MoonShine\ColorManager\ColorManager;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
@@ -52,6 +53,9 @@ final class MoonShineLayout extends AppLayout
                 MenuItem::make('Вопросы', QuestionResource::class, 'question-mark-circle'),
                 MenuItem::make('Варианты ответов', QuestionOptionResource::class, 'check-circle'),
             ], 'pencil-square'),
+            MenuGroup::make('Ответы', [
+                MenuItem::make('Ответы на опросы', SurveyResponseResource::class, 'clipboard-document-check'),
+            ], 'paper-airplane'),
         ];
     }
 

@@ -30,13 +30,11 @@ final class QuestionOptionResource extends ModelResource
 
     protected string $title = 'Варианты ответов';
 
-    protected array $with = ['question'];
+    protected array $with = ['question', 'section', 'survey'];
 
     protected int $itemsPerPage = 10;
 
     protected bool $cursorPaginate = true;
-
-    protected bool $stickyTable = true;
 
     protected bool $columnSelection = true;
 
@@ -70,6 +68,8 @@ final class QuestionOptionResource extends ModelResource
             Text::make('Вариант', 'option'),
             Number::make('Номер порядка', 'order')->sortable(),
             BelongsTo::make('Вопрос', 'question', 'question', QuestionResource::class)->sortable(),
+            BelongsTo::make('Секция', 'section', 'title', SectionResource::class)->sortable(),
+            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)->sortable(),
         ];
     }
 
@@ -83,7 +83,9 @@ final class QuestionOptionResource extends ModelResource
                 ID::make(),
                 Text::make('Вариант', 'option')->required(),
                 Number::make('Номер порядка', 'order')->required(),
-                BelongsTo::make('Вопрос', 'question', 'question', QuestionResource::class)->required(),
+                BelongsTo::make('Вопрос', 'question', 'question', QuestionResource::class)
+                    ->required()
+                    ->searchable(),
             ]),
         ];
     }
@@ -106,13 +108,25 @@ final class QuestionOptionResource extends ModelResource
      */
     protected function rules(mixed $item): array
     {
-        return [];
+        return [
+            'option' => ['required', 'string', 'max:255'],
+            'order' => ['required', 'integer', 'min:1'],
+            'question_id' => ['required', 'exists:questions,id'],
+        ];
     }
 
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Вопрос', 'question', 'question', QuestionResource::class)->nullable(),
+            BelongsTo::make('Опрос', 'survey', 'title', SurveyResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Секция', 'section', 'title', SectionResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Вопрос', 'question', 'question', QuestionResource::class)
+                ->nullable()
+                ->searchable(),
             Number::make('Номер порядка', 'order'),
         ];
     }
@@ -123,6 +137,8 @@ final class QuestionOptionResource extends ModelResource
             'id',
             'option',
             'question.question',
+            'survey.title',
+            'section.title',
         ];
     }
 }

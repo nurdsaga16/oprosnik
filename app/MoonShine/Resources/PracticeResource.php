@@ -39,8 +39,6 @@ final class PracticeResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected bool $columnSelection = true;
 
     protected ?PageType $redirectAfterSave = PageType::INDEX;
@@ -83,9 +81,15 @@ final class PracticeResource extends ModelResource
                 Textarea::make('Описание', 'description')->nullable(),
                 Date::make('Начало', 'start_date')->required(),
                 Date::make('Конец', 'end_date')->required(),
-                BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->required(),
-                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->required(),
-                BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->required(),
+                BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)
+                    ->required()
+                    ->searchable(),
+                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)
+                    ->required()
+                    ->searchable(),
+                BelongsTo::make('Группа', 'group', 'title', GroupResource::class)
+                    ->required()
+                    ->searchable(),
                 Switcher::make('Активность', 'active'),
             ]),
         ];
@@ -133,9 +137,15 @@ final class PracticeResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->nullable(),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->nullable(),
-            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->nullable(),
+            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)
+                ->nullable()
+                ->searchable(),
             Date::make('Начало', 'start_date')->nullable(),
             Date::make('Конец', 'end_date')->nullable(),
         ];

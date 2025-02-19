@@ -35,8 +35,6 @@ final class MoonShineUserRoleResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected SortDirection $sortDirection = SortDirection::ASC;
 
     protected function topButtons(): ListOf

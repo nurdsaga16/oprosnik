@@ -42,8 +42,6 @@ final class SurveyResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected bool $columnSelection = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
@@ -98,7 +96,9 @@ final class SurveyResource extends ModelResource
                     Date::make('Начало', 'start_date')->withTime()->required(),
                     Date::make('Конец', 'end_date')->withTime()->required(),
                 ]),
-                BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)->required(),
+                BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)
+                    ->required()
+                    ->searchable(),
                 Enum::make('Статус', 'status')
                     ->options([
                         'Активный' => 'Активный',
@@ -163,9 +163,15 @@ final class SurveyResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)->nullable(),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->nullable(),
-            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)->nullable(),
+            BelongsTo::make('Практика', 'practice', 'title', PracticeResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Группа', 'group', 'title', GroupResource::class)
+                ->nullable()
+                ->searchable(),
             Enum::make('Статус', 'status')
                 ->options([
                     'Активный' => 'Активный',

@@ -38,8 +38,6 @@ final class SubjectUserResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected ?PageType $redirectAfterSave = PageType::INDEX;
 
     protected SortDirection $sortDirection = SortDirection::DESC;
@@ -77,8 +75,12 @@ final class SubjectUserResource extends ModelResource
     {
         return [
             Box::make([
-                BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->required(),
-                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->required(),
+                BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)
+                    ->required()
+                    ->searchable(),
+                BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)
+                    ->required()
+                    ->searchable(),
                 Switcher::make('Активность', 'active'),
             ]),
         ];
@@ -112,8 +114,12 @@ final class SubjectUserResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)->nullable(),
-            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)->nullable(),
+            BelongsTo::make('Предмет', 'subject', 'title', SubjectResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Преподаватель', 'user', 'fullname', UserResource::class)
+                ->nullable()
+                ->searchable(),
         ];
     }
 

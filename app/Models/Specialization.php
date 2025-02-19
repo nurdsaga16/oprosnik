@@ -10,9 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Specialization extends Model
 {
+    protected $table = 'specializations';
+
+    protected $fillable = [
+        'title',
+        'department_id',
+    ];
+
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     public function groups(): HasMany

@@ -11,9 +11,22 @@ use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 final class Survey extends Model
 {
+    protected $table = 'surveys';
+
+    protected $fillable = [
+        'title',
+        'description',
+        'response_limit',
+        'start_date',
+        'end_date',
+        'practice_id',
+        'status',
+        'template',
+    ];
+
     public function practice(): BelongsTo
     {
-        return $this->belongsTo(Practice::class);
+        return $this->belongsTo(Practice::class, 'practice_id');
     }
 
     public function user(): HasOneThrough
@@ -34,5 +47,10 @@ final class Survey extends Model
     public function sections(): HasMany
     {
         return $this->hasMany(Section::class);
+    }
+
+    public function surveyResponses(): HasMany
+    {
+        return $this->hasMany(SurveyResponse::class);
     }
 }

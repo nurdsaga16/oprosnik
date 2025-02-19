@@ -33,8 +33,6 @@ final class SpecializationResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected array $with = ['department'];
 
     protected SortDirection $sortDirection = SortDirection::ASC;
@@ -74,7 +72,9 @@ final class SpecializationResource extends ModelResource
         return [
             Box::make([
                 ID::make(),
-                BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)->required(),
+                BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)
+                    ->required()
+                    ->searchable(),
                 Text::make('Название', 'title')->required(),
             ]),
         ];
@@ -109,7 +109,9 @@ final class SpecializationResource extends ModelResource
     protected function filters(): iterable
     {
         return [
-            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)->nullable(),
+            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)
+                ->nullable()
+                ->searchable(),
         ];
     }
 

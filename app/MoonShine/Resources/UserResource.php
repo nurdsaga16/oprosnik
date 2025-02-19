@@ -40,8 +40,6 @@ final class UserResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected bool $columnSelection = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;

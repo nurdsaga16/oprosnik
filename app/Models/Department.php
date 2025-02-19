@@ -9,6 +9,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 final class Department extends Model
 {
+    protected $table = 'departments';
+
+    protected $fillable = [
+        'name',
+    ];
+
     public function specializations(): HasMany
     {
         return $this->hasMany(Specialization::class);

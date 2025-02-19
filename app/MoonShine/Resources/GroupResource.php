@@ -38,8 +38,6 @@ final class GroupResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected bool $columnSelection = true;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
@@ -80,9 +78,15 @@ final class GroupResource extends ModelResource
                 ID::make(),
                 Text::make('Название', 'title')->required(),
                 Enum::make('Курс', 'course')->options([1 => '1', 2 => '2', 3 => '3'])->required(),
-                BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class)->required(),
-                BelongsTo::make('Отделение', 'department', 'title', SpecializationResource::class)->required(),
-                BelongsTo::make('Специальность', 'specialization', 'title', SpecializationResource::class)->required(),
+                BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class)
+                    ->required()
+                    ->searchable(),
+                BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)
+                    ->required()
+                    ->searchable(),
+                BelongsTo::make('Специальность', 'specialization', 'title', SpecializationResource::class)
+                    ->required()
+                    ->searchable(),
                 Switcher::make('Активный', 'active'),
             ]),
         ];
@@ -127,9 +131,15 @@ final class GroupResource extends ModelResource
     {
         return [
             Enum::make('Курс', 'course')->options([1 => '1', 2 => '2', 3 => '3'])->nullable(),
-            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)->nullable(),
-            BelongsTo::make('Специальность', 'specialization', 'title', SpecializationResource::class)->nullable(),
-            BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class)->nullable(),
+            BelongsTo::make('Отделение', 'department', 'title', DepartmentResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Специальность', 'specialization', 'title', SpecializationResource::class)
+                ->nullable()
+                ->searchable(),
+            BelongsTo::make('Куратор', 'user', 'fullname', UserResource::class)
+                ->nullable()
+                ->searchable(),
         ];
     }
 

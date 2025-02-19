@@ -32,8 +32,6 @@ final class DepartmentResource extends ModelResource
 
     protected bool $cursorPaginate = true;
 
-    protected bool $stickyTable = true;
-
     protected ?PageType $redirectAfterSave = PageType::INDEX;
 
     protected SortDirection $sortDirection = SortDirection::ASC;
